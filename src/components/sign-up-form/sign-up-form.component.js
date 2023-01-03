@@ -1,6 +1,11 @@
-import {useState} from "react";
+import {getRedirectResult} from "firebase/auth";
+import {useEffect, useState} from "react";
 
-import {createAuthUserWithEmailAndPassword, createUserDocumentFromAuth} from "../../utils/firebase/firebase.utils";
+import {
+    auth,
+    createAuthUserWithEmailAndPassword,
+    createUserDocumentFromAuth
+} from "../../utils/firebase/firebase.utils";
 import Button from "../button/button.component";
 
 import FormInput from "../form-input/form-input.component";
@@ -19,6 +24,12 @@ const SignUpForm = () => {
     const resetFormFields = () => {
         setFormFields(defaultFormFields);
     }
+    useEffect(async () => {
+        const response = await getRedirectResult(auth);
+        if (response) {
+            await createUserDocumentFromAuth(response.user);
+        }
+    },[])
 
     const handleSubmit = async (event) => {
         event.preventDefault();
